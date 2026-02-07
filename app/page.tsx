@@ -43,10 +43,26 @@ export default function Dashboard() {
 
   const totalProgress = Math.round((stats.completed / (stats.totalChapters || 1)) * 100) || 0;
 
-  if (!isLoaded) return <div className="p-12 text-center text-zinc-500">Loading tracking data...</div>;
+  if (!isLoaded) {
+    return (
+      <div className="max-w-5xl mx-auto p-4 sm:p-6 md:p-12 space-y-6 animate-in fade-in duration-300">
+        {/* Skeleton Loading */}
+        <div className="space-y-4">
+          <div className="h-8 bg-zinc-200 dark:bg-zinc-800 rounded-lg w-48 animate-pulse"></div>
+          <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-64 animate-pulse"></div>
+        </div>
+        <div className="h-32 bg-zinc-200 dark:bg-zinc-800 rounded-2xl animate-pulse"></div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="h-32 bg-zinc-200 dark:bg-zinc-800 rounded-xl animate-pulse"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-5xl mx-auto p-6 md:p-12 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-5xl mx-auto p-4 sm:p-6 md:p-12 space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
@@ -83,18 +99,18 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           { label: 'Total Chapters', val: stats.totalChapters, icon: BookOpen, color: 'text-zinc-500' },
           { label: 'In Progress', val: stats.inProgress, icon: Activity, color: 'text-amber-500' },
           { label: 'Revising', val: stats.revision, icon: RotateCcw, color: 'text-blue-500' },
           { label: 'Completed', val: stats.completed, icon: CheckCircle2, color: 'text-emerald-500' },
         ].map((stat, i) => (
-          <div key={i} className="bg-white dark:bg-zinc-900 p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between h-32 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
+          <div key={i} className="bg-white dark:bg-zinc-900 p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between min-h-[120px] sm:h-32 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
             <stat.icon size={20} className={stat.color} />
             <div>
-              <div className="text-2xl font-bold text-zinc-900 dark:text-white">{stat.val}</div>
-              <div className="text-xs text-zinc-500 font-medium">{stat.label}</div>
+              <div className="text-2xl sm:text-2xl font-bold text-zinc-900 dark:text-white">{stat.val}</div>
+              <div className="text-[10px] sm:text-xs text-zinc-500 font-medium mt-1">{stat.label}</div>
             </div>
           </div>
         ))}
@@ -110,22 +126,22 @@ export default function Dashboard() {
             <Link
               key={sub.id}
               href={`/subject/${sub.id}`}
-              className="p-4 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/50 cursor-pointer transition-colors group"
+              className="p-4 sm:p-5 min-h-[72px] flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/50 cursor-pointer transition-colors group active:bg-zinc-100 dark:active:bg-zinc-800"
             >
-              <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold ${sub.bgSoft} ${sub.color}`}>
+              <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-xs sm:text-sm font-bold shrink-0 ${sub.bgSoft} ${sub.color}`}>
                   {sub.shortName}
                 </div>
-                <div>
-                  <div className="font-medium text-zinc-900 dark:text-zinc-200 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">{sub.code}</div>
-                  <div className="text-xs text-zinc-500">{sub.name}</div>
+                <div className="min-w-0">
+                  <div className="font-medium text-sm sm:text-base text-zinc-900 dark:text-zinc-200 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors truncate">{sub.code}</div>
+                  <div className="text-xs sm:text-sm text-zinc-500 truncate">{sub.name}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="w-24 hidden sm:block">
+              <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+                <div className="w-20 sm:w-24 hidden sm:block">
                   <ProgressBar current={sub.chapters.filter(c => trackerData[c] === 'COMPLETED').length} total={sub.chapters.length} colorClass={sub.bgColor} />
                 </div>
-                <ChevronRight size={16} className="text-zinc-300 group-hover:text-zinc-500" />
+                <ChevronRight size={18} className="text-zinc-300 group-hover:text-zinc-500 transition-colors" />
               </div>
             </Link>
           ))}

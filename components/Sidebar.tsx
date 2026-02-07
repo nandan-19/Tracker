@@ -7,7 +7,7 @@ import { Layout, Trophy, X, Sun, Moon, Trash2 } from 'lucide-react';
 import { SYLLABUS } from '@/lib/syllabus';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 
 export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -15,6 +15,12 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
     const { theme, setTheme } = useTheme();
     const { logout, user } = useAuth();
     const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    // Avoid hydration mismatch
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const handleLogout = () => {
         if (confirm('Are you sure you want to logout?')) {
@@ -46,15 +52,20 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                            className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 transition-colors"
-                            title="Toggle Theme"
-                        >
-                            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                            <span className="sr-only">Toggle theme</span>
-                        </button>
+                        {mounted && (
+                            <button
+                                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                                className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 transition-colors"
+                                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                                aria-label="Toggle theme"
+                            >
+                                <div className="relative w-5 h-5 flex items-center justify-center">
+                                    <Sun className="absolute h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                                    <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                                </div>
+                                <span className="sr-only">Toggle theme</span>
+                            </button>
+                        )}
                         <button onClick={onClose} className="md:hidden text-zinc-400">
                             <X size={20} />
                         </button>

@@ -1,5 +1,5 @@
 
-'use className';
+'use client';
 
 import { STATUS_STATES } from '@/lib/syllabus';
 import { cn } from '@/lib/utils';
@@ -17,7 +17,13 @@ export function StatusBadge({ status, onClick, className }: StatusBadgeProps) {
         <button
             onClick={onClick}
             className={cn(
-                "px-3 py-1.5 rounded-md text-[10px] uppercase tracking-wide font-bold border transition-all duration-200 hover:opacity-80 active:scale-95 w-28 text-center select-none",
+                // Mobile-first: full width with proper touch target
+                "w-full sm:w-32 min-h-[44px] px-4 py-3 sm:py-2.5",
+                "rounded-lg text-xs sm:text-[10px] uppercase tracking-wide font-bold",
+                "border-2 transition-all duration-200",
+                "hover:opacity-80 active:scale-[0.98]",
+                "text-center select-none touch-manipulation",
+                "shadow-sm hover:shadow-md",
                 config.color,
                 className
             )}
