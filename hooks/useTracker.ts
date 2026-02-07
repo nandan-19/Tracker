@@ -21,17 +21,23 @@ export function useTracker() {
         setIsLoaded(true);
     }, [user]); // Re-run if user logs in to merge?
 
-    // Save to local storage whenever data changes
+    // Debounced Sync
+    useEffect(() => {
+        if (!isLoaded || !token) return;
+
+        const handler = setTimeout(() => {
+            syncData();
+        }, 2000); // Wait 2 seconds of inactivity before syncing
+
+        return () => clearTimeout(handler);
+    }, [trackerData, isLoaded, token]);
+
+    // Save to local storage immediately
     useEffect(() => {
         if (isLoaded) {
             localStorage.setItem('ca-final-tracker-v2', JSON.stringify(trackerData));
-
-            // Attempt sync if logged in
-            if (token) {
-                syncData();
-            }
         }
-    }, [trackerData, isLoaded, token]);
+    }, [trackerData, isLoaded]);
 
     const syncData = useCallback(async () => {
         if (!token) return;
@@ -46,7 +52,7 @@ export function useTracker() {
                 },
                 body: JSON.stringify({
                     data: trackerData,
-                    lastUpdated: new Date().toISOString() // Current time as last updated locally
+                    lastUpdated: new Date().toISOString()
                 })
             });
 
@@ -55,13 +61,16 @@ export function useTracker() {
             const result = await response.json();
 
             if (result.action === 'synced_from_server') {
-                // Server has newer data, update local
                 console.log('Syncing from server:', result.data);
-                setTrackerData(result.data);
-                // Update user context as well
-                updateUser(result.data, new Date(result.lastUpdated));
+                // Only update if different to avoid loop
+                if (JSON.stringify(result.data) !== JSON.stringify(trackerData)) {
+                    setTrackerData(result.data);
+                    updateUser(result.data, new Date(result.lastUpdated));
+                }
             } else {
                 // Synced to server successfully
+                // We don't need to update user context here if it causes a loop
+                // Just update the lastUpdated timestamp silently if possible
                 updateUser(trackerData, new Date());
             }
 
