@@ -192,10 +192,10 @@ export default function StatsPage() {
 
             {/* Activity Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="md:col-span-2">
-                    <ProgressGraph history={history} />
+                <div className="md:col-span-2 glass rounded-2xl overflow-hidden">
+                    <ProgressGraph history={history} trackerData={trackerData} />
                 </div>
-                <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm space-y-4">
+                <div className="glass rounded-2xl p-6 space-y-4">
                     <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
                         <Calendar size={16} />
                         Activity Summary
@@ -218,7 +218,7 @@ export default function StatsPage() {
             </div>
 
             {/* Status Distribution */}
-            <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+            <div className="glass rounded-2xl p-6">
                 <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-6 flex items-center gap-2">
                     <BarChart3 size={16} />
                     Status Distribution
@@ -268,7 +268,7 @@ export default function StatsPage() {
             </div>
 
             {/* Subject Breakdown */}
-            <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+            <div className="glass rounded-2xl p-6">
                 <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-6 flex items-center gap-2">
                     <TrendingUp size={16} />
                     Subject Breakdown
