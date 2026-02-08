@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 
-// New data type: stores status and the date it was last modified
 export type ChapterData = { status: string; updatedAt: string };
 export type TrackerDataMap = Record<string, ChapterData>;
 
@@ -12,71 +11,116 @@ export function useTracker() {
     const [history, setHistory] = useState<{ date: string; count: number }[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced' | 'error'>('idle');
+    const hasFetchedRef = useRef(false);
 
-    // Migration helper: convert old format to new format
+    // Migration helper
     const migrateData = (data: any): TrackerDataMap => {
         if (!data) return {};
         const migrated: TrackerDataMap = {};
         Object.keys(data).forEach(key => {
             const val = data[key];
             if (typeof val === 'string') {
-                // Old format: just a status string
                 migrated[key] = { status: val, updatedAt: new Date().toISOString() };
             } else if (val && typeof val === 'object' && val.status) {
-                // New format already
                 migrated[key] = val;
             }
         });
         return migrated;
     };
 
-    // Load initial data
+    // STEP 1: On mount, immediately fetch from server if logged in
     useEffect(() => {
-        const saved = localStorage.getItem('ca-final-tracker-v3'); // New version key
+        if (token && !hasFetchedRef.current) {
+            hasFetchedRef.current = true;
+            fetchFromServer();
+        } else if (!token) {
+            // Not logged in - load from local storage only
+            loadFromLocalStorage();
+        }
+    }, [token]);
+
+    const loadFromLocalStorage = () => {
+        const saved = localStorage.getItem('ca-final-tracker-v3');
         if (saved) {
-            const localData = JSON.parse(saved);
-            setTrackerData(migrateData(localData));
+            setTrackerData(migrateData(JSON.parse(saved)));
         } else {
-            // Try to migrate from old v2 key
             const oldSaved = localStorage.getItem('ca-final-tracker-v2');
             if (oldSaved) {
-                const oldData = JSON.parse(oldSaved);
-                setTrackerData(migrateData(oldData));
-            } else if (user) {
-                setTrackerData(migrateData(user.data));
+                setTrackerData(migrateData(JSON.parse(oldSaved)));
             }
         }
 
         const savedHistory = localStorage.getItem('ca-final-tracker-history');
         if (savedHistory) {
             setHistory(JSON.parse(savedHistory));
-        } else if (user && user.history) {
-            setHistory(user.history);
         }
         setIsLoaded(true);
-    }, [user]);
+    };
 
-    // Save to local storage immediately
+    // Fetch data from server (GET - no sync, just fetch)
+    const fetchFromServer = async () => {
+        if (!token) {
+            loadFromLocalStorage();
+            return;
+        }
+
+        setSyncStatus('syncing');
+        try {
+            console.log('📥 Fetching data from server...');
+            const response = await fetch('/api/sync', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Fetch failed');
+            }
+
+            const result = await response.json();
+            console.log('📥 Server data received:', result);
+
+            const serverData = migrateData(result.data);
+            const serverHistory = result.history || [];
+
+            // Apply server data
+            setTrackerData(serverData);
+            setHistory(serverHistory);
+
+            // Save to local storage
+            localStorage.setItem('ca-final-tracker-v3', JSON.stringify(serverData));
+            localStorage.setItem('ca-final-tracker-history', JSON.stringify(serverHistory));
+            localStorage.setItem('ca-final-tracker-last-synced', new Date(result.lastUpdated).toISOString());
+
+            setSyncStatus('synced');
+            setTimeout(() => setSyncStatus('idle'), 2000);
+
+        } catch (error) {
+            console.error('Fetch error:', error);
+            // Fallback to local storage if server fetch fails
+            loadFromLocalStorage();
+            setSyncStatus('error');
+        } finally {
+            setIsLoaded(true);
+        }
+    };
+
+    // Save to local storage when data changes
     useEffect(() => {
-        if (isLoaded) {
+        if (isLoaded && Object.keys(trackerData).length > 0) {
             localStorage.setItem('ca-final-tracker-v3', JSON.stringify(trackerData));
             localStorage.setItem('ca-final-tracker-history', JSON.stringify(history));
         }
     }, [trackerData, history, isLoaded]);
 
-    // Sync only on mount to get latest data
-    useEffect(() => {
-        if (token && isLoaded) {
-            syncData();
-        }
-    }, [token, isLoaded]);
-
-    const syncData = useCallback(async (dataToSync?: TrackerDataMap, historyToSync?: { date: string; count: number }[]) => {
+    // Push changes to server
+    const pushToServer = useCallback(async (dataToSync: TrackerDataMap, historyToSync: { date: string; count: number }[]) => {
         if (!token) return;
 
         setSyncStatus('syncing');
         try {
-            const currentData = dataToSync || trackerData;
+            const now = new Date().toISOString();
             const response = await fetch('/api/sync', {
                 method: 'POST',
                 headers: {
@@ -84,28 +128,25 @@ export function useTracker() {
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    data: currentData,
-                    history: historyToSync || history,
-                    lastUpdated: new Date().toISOString()
+                    data: dataToSync,
+                    history: historyToSync,
+                    lastUpdated: now
                 })
             });
 
             if (!response.ok) throw new Error('Sync failed');
 
             const result = await response.json();
+            console.log('📤 Sync result:', result.action);
 
             if (result.action === 'synced_from_server') {
-                console.log('Syncing from server:', result.data);
-                const migratedServerData = migrateData(result.data);
-                if (JSON.stringify(migratedServerData) !== JSON.stringify(currentData)) {
-                    setTrackerData(migratedServerData);
-                    if (result.history) setHistory(result.history);
-                    updateUser(migratedServerData, new Date(result.lastUpdated));
-                }
-            } else {
-                updateUser(currentData, new Date());
+                // Server had newer data
+                const serverData = migrateData(result.data);
+                setTrackerData(serverData);
+                if (result.history) setHistory(result.history);
             }
 
+            localStorage.setItem('ca-final-tracker-last-synced', now);
             setSyncStatus('synced');
             setTimeout(() => setSyncStatus('idle'), 2000);
 
@@ -113,7 +154,7 @@ export function useTracker() {
             console.error('Sync error:', error);
             setSyncStatus('error');
         }
-    }, [trackerData, history, token, updateUser]);
+    }, [token]);
 
     const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -138,7 +179,7 @@ export function useTracker() {
                 [chapterName]: { status: nextStatus, updatedAt: now }
             };
 
-            // Handle History (Streaks)
+            // Handle History
             const today = now.split('T')[0];
             let newHistory = [...history];
             const todayEntryIndex = newHistory.findIndex(h => h.date === today);
@@ -153,12 +194,12 @@ export function useTracker() {
 
             setHistory(newHistory);
 
-            // Trigger sync with debounce
+            // Debounced push to server
             if (token) {
                 if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
                 syncTimeoutRef.current = setTimeout(() => {
-                    syncData(newData, newHistory);
-                }, 2000);
+                    pushToServer(newData, newHistory);
+                }, 1000);
             }
 
             return newData;
@@ -180,9 +221,9 @@ export function useTracker() {
         isLoaded,
         toggleStatus,
         getStatus,
-        getUpdatedAt, // New helper
+        getUpdatedAt,
         syncStatus,
-        syncData: () => syncData(),
+        syncData: fetchFromServer,
         history
     };
 }

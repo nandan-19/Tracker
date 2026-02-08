@@ -20,6 +20,34 @@ async function getUserFromRequest(req: Request) {
     }
 }
 
+// GET: Fetch current data from server (no sync, just fetch)
+export async function GET(req: Request) {
+    try {
+        await connectToDatabase();
+
+        const userId = await getUserFromRequest(req);
+        if (!userId) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        }
+
+        return NextResponse.json({
+            data: user.data || {},
+            history: user.history || [],
+            lastUpdated: user.lastUpdated
+        });
+
+    } catch (error) {
+        console.error('Fetch error:', error);
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    }
+}
+
+// POST: Sync data (push local changes to server)
 export async function POST(req: Request) {
     try {
         await connectToDatabase();
@@ -42,7 +70,6 @@ export async function POST(req: Request) {
         // Logic: Last Write Wins (based on timestamp)
         // If client is sending newer data, update DB
         if (clientLastUpdated > dbLastUpdated) {
-            // Use findByIdAndUpdate to avoid version conflicts from concurrent updates
             const updateData: any = {
                 data: clientData,
                 lastUpdated: new Date(clientLastUpdated)
