@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Layout, Trophy, X, Sun, Moon, Trash2 } from 'lucide-react';
+import { Layout, Trophy, X, Sun, Moon, Trash2, BarChart3 } from 'lucide-react';
 import { SYLLABUS } from '@/lib/syllabus';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
@@ -85,6 +85,20 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                     >
                         <Layout size={18} />
                         Dashboard
+                    </Link>
+
+                    <Link
+                        href="/stats"
+                        onClick={onClose}
+                        className={cn(
+                            "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                            pathname === '/stats'
+                                ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white"
+                                : "text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:text-zinc-400"
+                        )}
+                    >
+                        <BarChart3 size={18} />
+                        Stats
                     </Link>
 
                     <div className="pt-4 pb-2 px-3 text-xs font-semibold text-zinc-400 uppercase tracking-wider">

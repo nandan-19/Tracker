@@ -29,7 +29,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { data: clientData, lastUpdated: clientLastUpdatedStr } = await req.json();
+        const { data: clientData, history: clientHistory, lastUpdated: clientLastUpdatedStr } = await req.json();
         const clientLastUpdated = new Date(clientLastUpdatedStr).getTime();
 
         const user = await User.findById(userId);
@@ -42,20 +42,34 @@ export async function POST(req: Request) {
         // Logic: Last Write Wins (based on timestamp)
         // If client is sending newer data, update DB
         if (clientLastUpdated > dbLastUpdated) {
-            user.data = clientData;
-            user.lastUpdated = new Date(clientLastUpdated);
-            await user.save();
+            // Use findByIdAndUpdate to avoid version conflicts from concurrent updates
+            const updateData: any = {
+                data: clientData,
+                lastUpdated: new Date(clientLastUpdated)
+            };
+
+            if (clientHistory) {
+                updateData.history = clientHistory;
+            }
+
+            const updatedUser = await User.findByIdAndUpdate(
+                userId,
+                { $set: updateData },
+                { new: true }
+            );
 
             return NextResponse.json({
                 action: 'synced_to_server',
-                data: user.data,
-                lastUpdated: user.lastUpdated
+                data: updatedUser?.data,
+                history: updatedUser?.history,
+                lastUpdated: updatedUser?.lastUpdated
             });
         } else {
             // If DB is newer or equal, send DB data to client
             return NextResponse.json({
                 action: 'synced_from_server',
                 data: user.data,
+                history: user.history,
                 lastUpdated: user.lastUpdated
             });
         }

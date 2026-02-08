@@ -20,6 +20,13 @@ const UserSchema = new Schema({
         type: Date,
         default: Date.now,
     },
+    history: {
+        type: [{
+            date: String,
+            count: Number
+        }],
+        default: []
+    }
 }, {
     timestamps: true,
 });

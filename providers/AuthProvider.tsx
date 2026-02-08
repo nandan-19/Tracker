@@ -5,8 +5,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface User {
     email: string;
-    data: Record<string, string>;
+    data: Record<string, any>; // Flexible to support both old and new formats
     lastUpdated: string; // ISO date string
+    history?: { date: string; count: number }[];
 }
 
 interface AuthContextType {
@@ -14,7 +15,7 @@ interface AuthContextType {
     token: string | null;
     login: (token: string, user: User) => void;
     logout: () => void;
-    updateUser: (data: Record<string, string>, lastUpdated: Date) => void;
+    updateUser: (data: Record<string, any>, lastUpdated: Date, history?: { date: string; count: number }[]) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -47,9 +48,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem('auth_user');
     };
 
-    const updateUser = (data: Record<string, string>, lastUpdated: Date) => {
+    const updateUser = (data: Record<string, any>, lastUpdated: Date, history?: { date: string; count: number }[]) => {
         if (user) {
-            const updatedUser = { ...user, data, lastUpdated: lastUpdated.toISOString() };
+            const updatedUser = {
+                ...user,
+                data,
+                lastUpdated: lastUpdated.toISOString(),
+                ...(history && { history })
+            };
             setUser(updatedUser);
             localStorage.setItem('auth_user', JSON.stringify(updatedUser));
         }

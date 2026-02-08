@@ -2,40 +2,76 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 
+// New data type: stores status and the date it was last modified
+export type ChapterData = { status: string; updatedAt: string };
+export type TrackerDataMap = Record<string, ChapterData>;
+
 export function useTracker() {
     const { user, token, updateUser } = useAuth();
-    const [trackerData, setTrackerData] = useState<Record<string, string>>({});
+    const [trackerData, setTrackerData] = useState<TrackerDataMap>({});
+    const [history, setHistory] = useState<{ date: string; count: number }[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced' | 'error'>('idle');
 
+    // Migration helper: convert old format to new format
+    const migrateData = (data: any): TrackerDataMap => {
+        if (!data) return {};
+        const migrated: TrackerDataMap = {};
+        Object.keys(data).forEach(key => {
+            const val = data[key];
+            if (typeof val === 'string') {
+                // Old format: just a status string
+                migrated[key] = { status: val, updatedAt: new Date().toISOString() };
+            } else if (val && typeof val === 'object' && val.status) {
+                // New format already
+                migrated[key] = val;
+            }
+        });
+        return migrated;
+    };
+
     // Load initial data
     useEffect(() => {
-        const saved = localStorage.getItem('ca-final-tracker-v2');
+        const saved = localStorage.getItem('ca-final-tracker-v3'); // New version key
         if (saved) {
             const localData = JSON.parse(saved);
-            setTrackerData(localData);
-        } else if (user) {
-            // If no local data but user is logged in, use user data
-            setTrackerData(user.data);
+            setTrackerData(migrateData(localData));
+        } else {
+            // Try to migrate from old v2 key
+            const oldSaved = localStorage.getItem('ca-final-tracker-v2');
+            if (oldSaved) {
+                const oldData = JSON.parse(oldSaved);
+                setTrackerData(migrateData(oldData));
+            } else if (user) {
+                setTrackerData(migrateData(user.data));
+            }
+        }
+
+        const savedHistory = localStorage.getItem('ca-final-tracker-history');
+        if (savedHistory) {
+            setHistory(JSON.parse(savedHistory));
+        } else if (user && user.history) {
+            setHistory(user.history);
         }
         setIsLoaded(true);
-    }, [user]); // Re-run if user logs in to merge?
+    }, [user]);
 
     // Save to local storage immediately
     useEffect(() => {
         if (isLoaded) {
-            localStorage.setItem('ca-final-tracker-v2', JSON.stringify(trackerData));
+            localStorage.setItem('ca-final-tracker-v3', JSON.stringify(trackerData));
+            localStorage.setItem('ca-final-tracker-history', JSON.stringify(history));
         }
-    }, [trackerData, isLoaded]);
+    }, [trackerData, history, isLoaded]);
 
     // Sync only on mount to get latest data
     useEffect(() => {
         if (token && isLoaded) {
             syncData();
         }
-    }, [token, isLoaded]); // Runs once when token/loaded becomes true
+    }, [token, isLoaded]);
 
-    const syncData = useCallback(async (dataToSync?: Record<string, string>) => {
+    const syncData = useCallback(async (dataToSync?: TrackerDataMap, historyToSync?: { date: string; count: number }[]) => {
         if (!token) return;
 
         setSyncStatus('syncing');
@@ -49,6 +85,7 @@ export function useTracker() {
                 },
                 body: JSON.stringify({
                     data: currentData,
+                    history: historyToSync || history,
                     lastUpdated: new Date().toISOString()
                 })
             });
@@ -59,10 +96,11 @@ export function useTracker() {
 
             if (result.action === 'synced_from_server') {
                 console.log('Syncing from server:', result.data);
-                // Only update if different to avoid loop
-                if (JSON.stringify(result.data) !== JSON.stringify(currentData)) {
-                    setTrackerData(result.data);
-                    updateUser(result.data, new Date(result.lastUpdated));
+                const migratedServerData = migrateData(result.data);
+                if (JSON.stringify(migratedServerData) !== JSON.stringify(currentData)) {
+                    setTrackerData(migratedServerData);
+                    if (result.history) setHistory(result.history);
+                    updateUser(migratedServerData, new Date(result.lastUpdated));
                 }
             } else {
                 updateUser(currentData, new Date());
@@ -75,24 +113,14 @@ export function useTracker() {
             console.error('Sync error:', error);
             setSyncStatus('error');
         }
-    }, [trackerData, token, updateUser]);
+    }, [trackerData, history, token, updateUser]);
 
-    // Debounced trigger for manual actions
-    const triggerSync = useCallback((newData: Record<string, string>) => {
-        if (!token) return;
-
-        // Clear existing timeout if any (simple debounce)
-        // Note: For a proper debounce in a hook we'd need a ref, 
-        // but for now we'll just allow the update and let the user trigger it.
-        // Actually, let's use a timeout ref to prevent rapid spamming.
-    }, [token]);
-
-    // We need a ref to hold the timeout ID across renders
     const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const toggleStatus = (chapterName: string) => {
         setTrackerData(prev => {
-            const currentStatus = prev[chapterName] || 'NOT_STARTED';
+            const currentEntry = prev[chapterName];
+            const currentStatus = currentEntry?.status || 'NOT_STARTED';
             let nextStatus;
 
             switch (currentStatus) {
@@ -104,13 +132,32 @@ export function useTracker() {
                 default: nextStatus = 'NOT_STARTED';
             }
 
-            const newData = { ...prev, [chapterName]: nextStatus };
+            const now = new Date().toISOString();
+            const newData: TrackerDataMap = {
+                ...prev,
+                [chapterName]: { status: nextStatus, updatedAt: now }
+            };
+
+            // Handle History (Streaks)
+            const today = now.split('T')[0];
+            let newHistory = [...history];
+            const todayEntryIndex = newHistory.findIndex(h => h.date === today);
+
+            if (['COMPLETED', 'REV_1', 'REV_2'].includes(nextStatus)) {
+                if (todayEntryIndex >= 0) {
+                    newHistory[todayEntryIndex].count += 1;
+                } else {
+                    newHistory.push({ date: today, count: 1 });
+                }
+            }
+
+            setHistory(newHistory);
 
             // Trigger sync with debounce
             if (token) {
                 if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
                 syncTimeoutRef.current = setTimeout(() => {
-                    syncData(newData); // Pass the new data directly to sync
+                    syncData(newData, newHistory);
                 }, 2000);
             }
 
@@ -118,14 +165,24 @@ export function useTracker() {
         });
     };
 
-    const getStatus = (chapterName: string) => trackerData[chapterName] || 'NOT_STARTED';
+    const getStatus = (chapterName: string): string => {
+        const entry = trackerData[chapterName];
+        return entry?.status || 'NOT_STARTED';
+    };
+
+    const getUpdatedAt = (chapterName: string): string | null => {
+        const entry = trackerData[chapterName];
+        return entry?.updatedAt || null;
+    };
 
     return {
         trackerData,
         isLoaded,
         toggleStatus,
         getStatus,
+        getUpdatedAt, // New helper
         syncStatus,
-        syncData: () => syncData() // Expose manual sync
+        syncData: () => syncData(),
+        history
     };
 }
