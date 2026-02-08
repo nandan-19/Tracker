@@ -1,7 +1,7 @@
 'use client'
 import { useTracker } from '@/hooks/useTracker';
 import { SYLLABUS } from '@/lib/syllabus';
-import { BookOpen, CheckCircle2, RotateCcw, Activity, Clock, ChevronRight, Sparkles, Calendar, TrendingUp, TrendingDown, Award, AlertTriangle, Flame } from 'lucide-react';
+import { BookOpen, CheckCircle2, RotateCcw, Activity, Clock, ChevronRight, Sparkles, Calendar, TrendingUp, TrendingDown, Award, AlertTriangle, Flame, CalendarDays, CalendarClock, Timer, Angry, Dumbbell, Star, Crown, Zap, type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/providers/AuthProvider';
 import { useMemo, useState, useEffect } from 'react';
@@ -27,30 +27,33 @@ function CountdownCard() {
       <div className="flex items-center justify-between mb-4 relative z-10">
         <div className="flex items-center gap-2">
           <Calendar size={14} className="text-indigo-500" />
-          <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">
             Time Until CA Final Jan 2027
           </span>
         </div>
-        <Clock size={16} className="text-zinc-300 dark:text-zinc-700" />
+        <Timer size={16} className="text-zinc-400 dark:text-zinc-600" />
       </div>
 
       <div className="grid grid-cols-3 gap-3 relative z-10">
         <div className="bg-indigo-500 rounded-xl p-3 text-center shadow-lg shadow-indigo-500/20">
+          <CalendarDays size={16} className="mx-auto mb-1 text-indigo-200" />
           <div className="text-2xl sm:text-3xl font-bold text-white">{months}</div>
           <div className="text-[10px] font-bold uppercase tracking-wider text-indigo-100">Months</div>
         </div>
         <div className="bg-violet-500 rounded-xl p-3 text-center shadow-lg shadow-violet-500/20">
+          <CalendarClock size={16} className="mx-auto mb-1 text-violet-200" />
           <div className="text-2xl sm:text-3xl font-bold text-white">{weeks}</div>
           <div className="text-[10px] font-bold uppercase tracking-wider text-violet-100">Weeks</div>
         </div>
         <div className="bg-fuchsia-500 rounded-xl p-3 text-center shadow-lg shadow-fuchsia-500/20">
+          <Clock size={16} className="mx-auto mb-1 text-fuchsia-200" />
           <div className="text-2xl sm:text-3xl font-bold text-white">{days}</div>
           <div className="text-[10px] font-bold uppercase tracking-wider text-fuchsia-100">Days</div>
         </div>
       </div>
 
       <div className="mt-4 text-center relative z-10">
-        <span className="text-xs text-zinc-500 font-medium">{totalDays} total days remaining</span>
+        <span className="text-xs text-zinc-600 dark:text-zinc-400 font-medium">{totalDays} total days remaining</span>
       </div>
     </div>
   );
@@ -104,54 +107,54 @@ function PerformanceComment({ history }: { history: Array<{ date: string; count:
     // Determine performance level and message
     let type: 'praise' | 'scold' | 'encourage';
     let message: string;
-    let emoji: string;
+    let icon: LucideIcon;
 
     if (streak === 0 && yesterdayActivity > 0) {
       // Broke the streak today
       type = 'scold';
-      emoji = '😤';
+      icon = Angry;
       message = "You broke your streak today! Don't let one day become two. Get back on track NOW!";
     } else if (todayActivity === 0 && new Date().getHours() >= 18) {
       // No activity today and it's evening
       type = 'encourage';
-      emoji = '💪';
+      icon = Dumbbell;
       message = "It's getting late and you haven't studied today. Even 30 mins counts. Start now!";
     } else if (todayActivity >= weekAvg * 1.5 && todayActivity >= 3) {
       // Outperforming average significantly
       type = 'praise';
-      emoji = '🔥';
+      icon = Flame;
       message = `BEAST MODE! ${todayActivity} updates today - you're crushing your weekly average of ${weekAvg}!`;
     } else if (todayActivity >= weekAvg && todayActivity >= 2) {
       // Meeting or exceeding average
       type = 'praise';
-      emoji = '⭐';
+      icon = Star;
       message = streak >= 3
         ? `${streak} day streak! Keep the momentum going, future CA!`
         : `Great work today! ${todayActivity} chapter${todayActivity > 1 ? 's' : ''} done.`;
     } else if (todayActivity > 0 && todayActivity < weekAvg) {
       // Below average but trying
       type = 'encourage';
-      emoji = '💫';
+      icon = Zap;
       message = `Good start with ${todayActivity}! Your average is ${weekAvg}. Push for ${weekAvg - todayActivity} more!`;
     } else if (streak >= 7) {
       // Long streak maintained
       type = 'praise';
-      emoji = '👑';
+      icon = Crown;
       message = `${streak} days straight! You're in the top tier. Legends maintain streaks!`;
     } else if (todayActivity === 0) {
       // No activity yet
       type = 'encourage';
-      emoji = '📖';
+      icon = BookOpen;
       message = weekAvg > 0
         ? `Your average is ${weekAvg}/day. Let's match that today!`
         : "Start your CA journey today. Complete your first chapter!";
     } else {
       type = 'praise';
-      emoji = '✨';
+      icon = Sparkles;
       message = "You're putting in the work. Stay focused!";
     }
 
-    return { type, message, emoji, todayActivity, streak, weekAvg };
+    return { type, message, icon, todayActivity, streak, weekAvg };
   }, [history]);
 
   const bgColors = {
@@ -172,7 +175,7 @@ function PerformanceComment({ history }: { history: Array<{ date: string; count:
     <div className={`${bgColors[analysis.type]} rounded-2xl p-4 shadow-lg flex items-center gap-4`}>
       <div className="shrink-0">
         <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-          <span className="text-2xl">{analysis.emoji}</span>
+          <analysis.icon size={24} className="text-white" strokeWidth={2.5} />
         </div>
       </div>
       <div className="flex-1 min-w-0">
@@ -265,19 +268,19 @@ export default function Dashboard() {
       {/* Stats Grid with Glassmorphism */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
-          { label: 'Total Chapters', val: stats.totalChapters, icon: BookOpen, gradient: 'from-zinc-100 to-zinc-50 dark:from-zinc-800/50 dark:to-zinc-900/50', iconColor: 'text-zinc-500' },
-          { label: 'In Progress', val: stats.inProgress, icon: Activity, gradient: 'from-amber-100/80 to-amber-50/50 dark:from-amber-900/20 dark:to-amber-950/20', iconColor: 'text-amber-500' },
-          { label: 'Revising', val: stats.revision, icon: RotateCcw, gradient: 'from-blue-100/80 to-blue-50/50 dark:from-blue-900/20 dark:to-blue-950/20', iconColor: 'text-blue-500' },
-          { label: 'Completed', val: stats.completed, icon: CheckCircle2, gradient: 'from-emerald-100/80 to-emerald-50/50 dark:from-emerald-900/20 dark:to-emerald-950/20', iconColor: 'text-emerald-500' },
+          { label: 'Total Chapters', val: stats.totalChapters, icon: BookOpen, gradient: 'from-slate-100 to-slate-50 dark:from-zinc-800/50 dark:to-zinc-900/50', iconColor: 'text-slate-600 dark:text-zinc-400', borderColor: 'border-slate-200 dark:border-zinc-700' },
+          { label: 'In Progress', val: stats.inProgress, icon: Activity, gradient: 'from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-amber-950/20', iconColor: 'text-amber-600 dark:text-amber-400', borderColor: 'border-amber-200 dark:border-amber-800/50' },
+          { label: 'Revising', val: stats.revision, icon: RotateCcw, gradient: 'from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-blue-950/20', iconColor: 'text-blue-600 dark:text-blue-400', borderColor: 'border-blue-200 dark:border-blue-800/50' },
+          { label: 'Completed', val: stats.completed, icon: CheckCircle2, gradient: 'from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-emerald-950/20', iconColor: 'text-emerald-600 dark:text-emerald-400', borderColor: 'border-emerald-200 dark:border-emerald-800/50' },
         ].map((stat, i) => (
           <div
             key={i}
-            className={`relative rounded-xl p-4 sm:p-5 flex flex-col justify-between min-h-[110px] overflow-hidden glass-subtle bg-gradient-to-br ${stat.gradient} hover:shadow-md transition-all duration-300 group`}
+            className={`relative rounded-xl p-4 sm:p-5 flex flex-col justify-between min-h-[110px] overflow-hidden bg-gradient-to-br ${stat.gradient} border ${stat.borderColor} hover:shadow-lg transition-all duration-300 group`}
           >
             <stat.icon size={18} className={`${stat.iconColor} group-hover:scale-110 transition-transform`} />
             <div>
-              <div className="text-2xl font-bold text-zinc-900 dark:text-white">{stat.val}</div>
-              <div className="text-[10px] text-zinc-500 font-medium mt-0.5 uppercase tracking-wide">{stat.label}</div>
+              <div className="text-2xl font-bold text-zinc-800 dark:text-white">{stat.val}</div>
+              <div className="text-[10px] text-zinc-500 dark:text-zinc-400 font-medium mt-0.5 uppercase tracking-wide">{stat.label}</div>
             </div>
           </div>
         ))}

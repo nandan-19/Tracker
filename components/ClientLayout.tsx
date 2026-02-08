@@ -33,9 +33,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     };
 
     return (
-        <div className="flex h-screen w-full font-sans antialiased bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
+        <div className="flex h-screen w-full font-sans antialiased bg-[#f4f6f8] dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-            <main className="flex-1 overflow-y-auto h-full bg-zinc-50 dark:bg-zinc-950/50">
+            <main className="flex-1 overflow-y-auto h-full">
                 {/* Glassmorphism Mobile Header */}
                 <div className="md:hidden sticky top-0 z-30">
                     {/* Gradient accent line */}

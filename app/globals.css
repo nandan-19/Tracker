@@ -7,8 +7,8 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --background: 220 14% 96%;
+    --foreground: 224 71% 4%;
   }
 
   .dark {
@@ -16,9 +16,17 @@
     --foreground: 0 0% 98%;
   }
 
-  /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
+  }
+
+  /* Light mode body - subtle off-white */
+  body {
+    background: #f4f6f8;
+  }
+
+  .dark body {
+    background: #09090b;
   }
 
   /* Custom scrollbar */
@@ -32,12 +40,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(113, 113, 122, 0.3);
+    background: rgba(113, 113, 122, 0.4);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(113, 113, 122, 0.5);
+    background: rgba(113, 113, 122, 0.6);
   }
 
   .dark ::-webkit-scrollbar-thumb {
@@ -48,7 +56,6 @@
     background: rgba(161, 161, 170, 0.4);
   }
 
-  /* Focus visible for accessibility */
   *:focus-visible {
     outline: 2px solid rgb(99, 102, 241);
     outline-offset: 2px;
@@ -57,67 +64,100 @@
 }
 
 @layer components {
-  /* Glassmorphism utilities */
+
+  /* Light mode glass - SOLID white with subtle transparency, NOT blurry */
   .glass {
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
   }
 
   .dark .glass {
-    background: rgba(24, 24, 27, 0.75);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background: rgba(24, 24, 27, 0.8);
     border: 1px solid rgba(63, 63, 70, 0.4);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
   }
 
   .glass-subtle {
-    backdrop-filter: blur(8px) saturate(150%);
-    -webkit-backdrop-filter: blur(8px) saturate(150%);
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
   }
 
   .dark .glass-subtle {
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
     background: rgba(24, 24, 27, 0.6);
     border: 1px solid rgba(63, 63, 70, 0.3);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  /* Solid card for light mode */
+  .card-solid {
+    background: white;
+    border: 1px solid #e4e4e7;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .card-solid {
+    background: rgba(24, 24, 27, 0.8);
+    border: 1px solid rgba(63, 63, 70, 0.4);
   }
 }
 
 @layer utilities {
-  /* Pulse animation for sync */
   @keyframes pulse-soft {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.6;
+    }
   }
 
   .animate-pulse-soft {
     animation: pulse-soft 2s ease-in-out infinite;
   }
 
-  /* Shimmer loading effect */
   @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+      background-position: -200% 0;
+    }
+
+    100% {
+      background-position: 200% 0;
+    }
   }
 
   .animate-shimmer {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
   }
 
-  /* Status change pop */
   @keyframes status-pop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.05);
+    }
+
+    100% {
+      transform: scale(1);
+    }
   }
 
   .animate-status-pop {
     animation: status-pop 0.2s ease-out;
   }
 
-  /* Subtle gradient text */
   .text-gradient {
     background: linear-gradient(135deg, rgb(99, 102, 241), rgb(168, 85, 247));
     -webkit-background-clip: text;

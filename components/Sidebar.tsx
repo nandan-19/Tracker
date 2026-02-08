@@ -56,7 +56,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
             {/* Sidebar */}
             <aside className={cn(
                 "fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-300 ease-out md:relative md:translate-x-0",
-                "glass-subtle flex flex-col",
+                "bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex flex-col shadow-lg dark:shadow-none",
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
                 {/* Header with gradient accent */}
@@ -128,7 +128,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                         Statistics
                     </Link>
 
-                    <div className="pt-5 pb-2 px-4 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                    <div className="pt-5 pb-2 px-4 text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest">
                         Subjects
                     </div>
 
