@@ -3,6 +3,8 @@
 
 import { Sidebar } from '@/components/Sidebar';
 import { BottomNav } from '@/components/BottomNav';
+import { NotificationPrompt } from '@/components/NotificationPrompt';
+import { NotificationManager } from '@/components/NotificationManager';
 import { useState } from 'react';
 import { Menu, Cloud, CloudOff, Check, Loader2 } from 'lucide-react';
 import { useTracker } from '@/hooks/useTracker';
@@ -35,10 +37,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
     return (
         <div className="flex h-screen w-full font-sans antialiased bg-[#f4f6f8] dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
-            {/* Sidebar - hidden on mobile, visible on desktop */}
-            <div className="hidden md:block">
-                <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-            </div>
+            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
             <main className="flex-1 overflow-y-auto h-full">
                 {/* Page content with bottom padding for mobile nav */}
@@ -48,6 +47,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
                 {/* Bottom Navigation for Mobile */}
                 <BottomNav />
+
+                {/* Notification Components */}
+                <NotificationPrompt />
+                <NotificationManager />
             </main>
         </div>
     );
