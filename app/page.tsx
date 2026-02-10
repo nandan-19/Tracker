@@ -287,7 +287,7 @@ export default function Dashboard() {
       </div>
 
       {/* Subject Summary List with Glassmorphism */}
-      <div className="glass rounded-2xl overflow-hidden">
+      <div id="subjects" className="glass rounded-2xl overflow-hidden scroll-mt-20">
         <div className="p-5 border-b border-zinc-200/50 dark:border-zinc-700/50 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles size={16} className="text-indigo-500" />
