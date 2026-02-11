@@ -6,6 +6,7 @@ import { BottomNav } from '@/components/BottomNav';
 import { NotificationPrompt } from '@/components/NotificationPrompt';
 import { NotificationManager } from '@/components/NotificationManager';
 import { NotificationTester } from '@/components/NotificationTester';
+import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
 import { useState } from 'react';
 import { Menu, Cloud, CloudOff, Check, Loader2 } from 'lucide-react';
 import { useTracker } from '@/hooks/useTracker';
@@ -38,6 +39,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
     return (
         <div className="flex h-screen w-full font-sans antialiased bg-[#f4f6f8] dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
+            {/* Service Worker for PWA notifications */}
+            <ServiceWorkerRegistration />
+
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
             <main className="flex-1 overflow-y-auto h-full">

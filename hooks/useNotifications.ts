@@ -39,15 +39,27 @@ export function useNotifications() {
         }
     };
 
-    const sendNotification = (title: string, options?: NotificationOptions) => {
+    const sendNotification = async (title: string, options?: NotificationOptions) => {
         if (state.permission !== 'granted') return;
 
         try {
-            new Notification(title, {
-                icon: '/icons/icon.png',
-                badge: '/icons/icon.png',
-                ...options
-            });
+            // Use service worker for better mobile PWA support
+            if ('serviceWorker' in navigator) {
+                const registration = await navigator.serviceWorker.ready;
+                await registration.showNotification(title, {
+                    icon: '/icons/icon.png',
+                    badge: '/icons/icon.png',
+                    requireInteraction: false,
+                    ...options
+                });
+            } else {
+                // Fallback to basic Notification API
+                new Notification(title, {
+                    icon: '/icons/icon.png',
+                    badge: '/icons/icon.png',
+                    ...options
+                });
+            }
         } catch (error) {
             console.error('Error sending notification:', error);
         }
