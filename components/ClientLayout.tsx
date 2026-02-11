@@ -5,6 +5,7 @@ import { Sidebar } from '@/components/Sidebar';
 import { BottomNav } from '@/components/BottomNav';
 import { NotificationPrompt } from '@/components/NotificationPrompt';
 import { NotificationManager } from '@/components/NotificationManager';
+import { NotificationTester } from '@/components/NotificationTester';
 import { useState } from 'react';
 import { Menu, Cloud, CloudOff, Check, Loader2 } from 'lucide-react';
 import { useTracker } from '@/hooks/useTracker';
@@ -51,6 +52,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 {/* Notification Components */}
                 <NotificationPrompt />
                 <NotificationManager />
+
+                {/* DEV ONLY: Notification Tester - Remove in production */}
+                {process.env.NODE_ENV === 'development' && <NotificationTester />}
             </main>
         </div>
     );
