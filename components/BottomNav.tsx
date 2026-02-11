@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Layout, BarChart3, Home } from 'lucide-react';
+import { Layout, BarChart3, Home, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function BottomNav() {
@@ -44,6 +44,13 @@ export function BottomNav() {
             active: pathname.startsWith('/subject/'),
             isButton: true,
             onClick: handleSubjectsClick
+        },
+        {
+            href: '/settings',
+            label: 'Settings',
+            icon: Settings,
+            active: pathname === '/settings',
+            isButton: false
         }
     ];
 
@@ -52,7 +59,7 @@ export function BottomNav() {
             {/* Gradient accent line */}
             <div className="h-0.5 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-60" />
 
-            <div className="grid grid-cols-3 h-16">
+            <div className="grid grid-cols-4 h-16">
                 {navItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = item.active;
@@ -73,27 +80,25 @@ export function BottomNav() {
                                 )}
                             </div>
                             <span className={cn(
-                                "text-[10px] font-medium tracking-tight",
-                                isActive && "font-bold"
+                                "text-[10px] font-medium",
+                                isActive ? "font-bold" : ""
                             )}>
                                 {item.label}
                             </span>
                         </>
                     );
 
-                    const className = cn(
-                        "flex flex-col items-center justify-center gap-1 transition-all active:scale-95",
-                        isActive
-                            ? "text-indigo-600 dark:text-indigo-400"
-                            : "text-zinc-500 dark:text-zinc-400"
-                    );
-
                     if (item.isButton) {
                         return (
                             <button
-                                key={item.href}
+                                key={item.label}
                                 onClick={item.onClick}
-                                className={className}
+                                className={cn(
+                                    "flex flex-col items-center justify-center gap-1 transition-all duration-200 active:scale-95",
+                                    isActive
+                                        ? "text-indigo-600 dark:text-indigo-400"
+                                        : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+                                )}
                             >
                                 {content}
                             </button>
@@ -104,7 +109,12 @@ export function BottomNav() {
                         <Link
                             key={item.href}
                             href={item.href}
-                            className={className}
+                            className={cn(
+                                "flex flex-col items-center justify-center gap-1 transition-all duration-200 active:scale-95",
+                                isActive
+                                    ? "text-indigo-600 dark:text-indigo-400"
+                                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+                            )}
                         >
                             {content}
                         </Link>

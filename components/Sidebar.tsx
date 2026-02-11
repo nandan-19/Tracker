@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Layout, Trophy, X, Sun, Moon, LogOut, BarChart3 } from 'lucide-react';
+import { Layout, Trophy, X, Sun, Moon, LogOut, BarChart3, Settings } from 'lucide-react';
 import { SYLLABUS } from '@/lib/syllabus';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
@@ -126,6 +126,20 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                     >
                         <BarChart3 size={18} />
                         Statistics
+                    </Link>
+
+                    <Link
+                        href="/settings"
+                        onClick={onClose}
+                        className={cn(
+                            "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
+                            pathname === '/settings'
+                                ? "bg-gradient-to-r from-indigo-500/10 to-purple-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-800/50"
+                                : "text-zinc-600 hover:bg-zinc-100/80 dark:text-zinc-400 dark:hover:bg-zinc-800/50"
+                        )}
+                    >
+                        <Settings size={18} />
+                        Settings
                     </Link>
 
                     <div className="pt-5 pb-2 px-4 text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest">

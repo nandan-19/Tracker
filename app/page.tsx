@@ -4,6 +4,7 @@ import { SYLLABUS } from '@/lib/syllabus';
 import { BookOpen, CheckCircle2, RotateCcw, Activity, Clock, ChevronRight, Sparkles, Calendar, TrendingUp, TrendingDown, Award, AlertTriangle, Flame, CalendarDays, CalendarClock, Timer, Angry, Dumbbell, Star, Crown, Zap, type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/providers/AuthProvider';
+import { useSettings } from '@/providers/SettingsProvider';
 import { useMemo, useState, useEffect } from 'react';
 import { ProgressGraph } from '@/components/ProgressGraph';
 import { Header } from '@/components/Header';
@@ -11,7 +12,8 @@ import { MotivationCard } from '@/components/MotivationCard';
 
 // Detailed Countdown Component
 function CountdownCard() {
-  const targetDate = new Date('2027-01-01');
+  const { settings } = useSettings();
+  const targetDate = new Date(settings.profile.examDate);
   const today = new Date();
   const diffTime = targetDate.getTime() - today.getTime();
 
@@ -28,7 +30,7 @@ function CountdownCard() {
         <div className="flex items-center gap-2">
           <Calendar size={14} className="text-indigo-500" />
           <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">
-            Time Until CA Final Jan 2027
+            Time Until CA Final {new Date(settings.profile.examDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
           </span>
         </div>
         <Timer size={16} className="text-zinc-400 dark:text-zinc-600" />
@@ -61,6 +63,8 @@ function CountdownCard() {
 
 // Performance-based Comment Component
 function PerformanceComment({ history }: { history: Array<{ date: string; count: number }> }) {
+  const { settings } = useSettings();
+
   const analysis = useMemo(() => {
     const today = new Date().toISOString().split('T')[0];
     const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
@@ -78,33 +82,19 @@ function PerformanceComment({ history }: { history: Array<{ date: string; count:
       ? Math.round(last7Days.reduce((sum, h) => sum + h.count, 0) / 7)
       : 0;
 
-    // Calculate streak
+    // Streak
     let streak = 0;
-    let checkDate = new Date();
-    const hasToday = history.find(h => h.date === today && h.count > 0);
-    if (!hasToday) {
-      const hasYesterday = history.find(h => h.date === yesterday && h.count > 0);
-      if (!hasYesterday) {
-        streak = 0;
-      } else {
-        checkDate.setDate(checkDate.getDate() - 1);
-      }
+    const sorted = [...history].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    for (const entry of sorted) {
+      if (entry.count === 0) break;
+      streak++;
     }
 
-    if (hasToday || history.find(h => h.date === yesterday && h.count > 0)) {
-      while (true) {
-        const dateStr = checkDate.toISOString().split('T')[0];
-        const hasActivity = history.find(h => h.date === dateStr && h.count > 0);
-        if (hasActivity) {
-          streak++;
-          checkDate.setDate(checkDate.getDate() - 1);
-        } else {
-          break;
-        }
-      }
-    }
+    // Analysis logic with goals
+    const dailyGoal = settings.study.dailyGoal;
+    const weeklyGoal = settings.study.weeklyGoal;
+    const weekTotal = last7Days.reduce((sum, h) => sum + h.count, 0);
 
-    // Determine performance level and message
     let type: 'praise' | 'scold' | 'encourage';
     let message: string;
     let icon: LucideIcon;
@@ -118,24 +108,22 @@ function PerformanceComment({ history }: { history: Array<{ date: string; count:
       // No activity today and it's evening
       type = 'encourage';
       icon = Dumbbell;
-      message = "It's getting late and you haven't studied today. Even 30 mins counts. Start now!";
-    } else if (todayActivity >= weekAvg * 1.5 && todayActivity >= 3) {
-      // Outperforming average significantly
+      message = `It's getting late and you haven't studied today. Your daily goal is ${dailyGoal} chapters. Start now!`;
+    } else if (todayActivity >= dailyGoal && dailyGoal > 0) {
+      // Met or exceeded daily goal
       type = 'praise';
       icon = Flame;
-      message = `BEAST MODE! ${todayActivity} updates today - you're crushing your weekly average of ${weekAvg}!`;
-    } else if (todayActivity >= weekAvg && todayActivity >= 2) {
-      // Meeting or exceeding average
+      message = `BEAST MODE! ${todayActivity} chapters today - you crushed your daily goal of ${dailyGoal}!`;
+    } else if (weekTotal >= weeklyGoal && weeklyGoal > 0) {
+      // Met weekly goal
       type = 'praise';
-      icon = Star;
-      message = streak >= 3
-        ? `${streak} day streak! Keep the momentum going, future CA!`
-        : `Great work today! ${todayActivity} chapter${todayActivity > 1 ? 's' : ''} done.`;
-    } else if (todayActivity > 0 && todayActivity < weekAvg) {
-      // Below average but trying
+      icon = Crown;
+      message = `Amazing! ${weekTotal} chapters this week - you've hit your weekly goal of ${weeklyGoal}!`;
+    } else if (todayActivity > 0 && todayActivity < dailyGoal) {
+      // Below daily goal but trying
       type = 'encourage';
       icon = Zap;
-      message = `Good start with ${todayActivity}! Your average is ${weekAvg}. Push for ${weekAvg - todayActivity} more!`;
+      message = `Good start with ${todayActivity}! Push for ${dailyGoal - todayActivity} more to hit your ${dailyGoal} chapter goal!`;
     } else if (streak >= 7) {
       // Long streak maintained
       type = 'praise';
@@ -145,8 +133,8 @@ function PerformanceComment({ history }: { history: Array<{ date: string; count:
       // No activity yet
       type = 'encourage';
       icon = BookOpen;
-      message = weekAvg > 0
-        ? `Your average is ${weekAvg}/day. Let's match that today!`
+      message = dailyGoal > 0
+        ? `Your daily goal is ${dailyGoal} chapters. Let's start strong today!`
         : "Start your CA journey today. Complete your first chapter!";
     } else {
       type = 'praise';
@@ -154,8 +142,8 @@ function PerformanceComment({ history }: { history: Array<{ date: string; count:
       message = "You're putting in the work. Stay focused!";
     }
 
-    return { type, message, icon, todayActivity, streak, weekAvg };
-  }, [history]);
+    return { type, message, icon, todayActivity, streak, weekAvg, weekTotal, dailyGoal, weeklyGoal };
+  }, [history, settings]);
 
   const bgColors = {
     praise: 'bg-emerald-500',
@@ -199,9 +187,10 @@ function PerformanceComment({ history }: { history: Array<{ date: string; count:
 }
 
 
-export default function Dashboard() {
-  const { trackerData, isLoaded, history } = useTracker();
+export default function Page() {
   const { user } = useAuth();
+  const { settings } = useSettings();
+  const { trackerData, history, isLoaded } = useTracker();
 
   const stats = useMemo(() => {
     let totalChapters = 0;
@@ -214,6 +203,7 @@ export default function Dashboard() {
         totalChapters++;
         const entry = trackerData[ch];
         const status = entry?.status || 'NOT_STARTED';
+
         if (status === 'COMPLETED') completed++;
         else if (status === 'REV_1' || status === 'REV_2') revision++;
         else if (status === 'IN_PROGRESS') inProgress++;
@@ -246,6 +236,10 @@ export default function Dashboard() {
         <div className="text-right hidden md:block">
           <div className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider mb-1">Overall</div>
           <div className="text-3xl font-mono font-bold text-gradient">{totalProgress}%</div>
+          <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 border border-amber-200 dark:border-amber-800/50">
+            <Crown size={12} className="text-amber-600 dark:text-amber-400" />
+            <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300">{settings.profile.targetRank}</span>
+          </div>
         </div>
       </div>
 

@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { SettingsProvider } from "@/providers/SettingsProvider";
 import ClientLayout from "@/components/ClientLayout";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
@@ -39,7 +40,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <ClientLayout>{children}</ClientLayout>
+            <SettingsProvider>
+              <ClientLayout>{children}</ClientLayout>
+            </SettingsProvider>
           </AuthProvider>
         </ThemeProvider>
         <SpeedInsights />

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTracker } from './useTracker';
+import { useSettings } from '@/providers/SettingsProvider';
 
 interface NotificationState {
     permission: NotificationPermission;
@@ -14,6 +15,7 @@ export function useNotifications() {
         isSupported: false
     });
     const { history, trackerData } = useTracker();
+    const { settings } = useSettings();
 
     useEffect(() => {
         if (typeof window !== 'undefined' && 'Notification' in window) {
@@ -53,7 +55,8 @@ export function useNotifications() {
 
     // Smart notification logic - determines if notification should be sent
     const checkAndNotify = () => {
-        if (state.permission !== 'granted') return;
+        // Check if notifications are globally enabled
+        if (!settings.notifications.enabled || state.permission !== 'granted') return;
 
         const today = new Date().toISOString().split('T')[0];
         const todayActivity = history?.find(h => h.date === today)?.count || 0;
@@ -89,7 +92,7 @@ export function useNotifications() {
         if (sentCount >= 2) return;
 
         // SCENARIO 1: Evening nudge (6 PM - 9 PM) - if no activity today
-        if (currentHour >= 18 && currentHour < 21 && todayActivity === 0 && !sentToday) {
+        if (settings.notifications.eveningNudge && currentHour >= 18 && currentHour < 21 && todayActivity === 0 && !sentToday) {
             sendNotification('CA Tracker Reminder', {
                 body: 'Haven\'t studied today? Even 30 minutes counts. Keep your streak alive! 🔥',
                 tag: 'evening-nudge'
@@ -99,7 +102,7 @@ export function useNotifications() {
         }
 
         // SCENARIO 2: Streak alert (morning 10 AM) - if yesterday had activity but today doesn't
-        if (currentHour === 10 && todayActivity === 0 && streak >= 3 && sentCount === 0) {
+        if (settings.notifications.streakAlert && currentHour === 10 && todayActivity === 0 && streak >= 3 && sentCount === 0) {
             sendNotification('Don\'t Break Your Streak!', {
                 body: `You have a ${streak}-day streak. Study now to keep it going! 💪`,
                 tag: 'streak-alert'
@@ -109,20 +112,22 @@ export function useNotifications() {
         }
 
         // SCENARIO 3: Milestone celebration - happens immediately when milestone hit
-        const milestones = [10, 25, 50, 75, 100, 136];
-        const totalCompleted = Object.values(trackerData).filter(c => c.status === 'COMPLETED').length;
+        if (settings.notifications.milestones) {
+            const milestones = [10, 25, 50, 75, 100, 136];
+            const totalCompleted = Object.values(trackerData).filter(c => c.status === 'COMPLETED').length;
 
-        const lastMilestone = localStorage.getItem('lastMilestone');
-        const lastMilestoneNum = lastMilestone ? parseInt(lastMilestone) : 0;
+            const lastMilestone = localStorage.getItem('lastMilestone');
+            const lastMilestoneNum = lastMilestone ? parseInt(lastMilestone) : 0;
 
-        const newMilestone = milestones.find(m => totalCompleted >= m && m > lastMilestoneNum);
-        if (newMilestone && sentCount < 2) {
-            sendNotification('Milestone Achieved! 🎉', {
-                body: `You've completed ${newMilestone} chapters! You're crushing it!`,
-                tag: 'milestone'
-            });
-            localStorage.setItem('lastMilestone', newMilestone.toString());
-            localStorage.setItem(notificationKey, (sentCount + 1).toString());
+            const newMilestone = milestones.find(m => totalCompleted >= m && m > lastMilestoneNum);
+            if (newMilestone && sentCount < 2) {
+                sendNotification('Milestone Achieved! 🎉', {
+                    body: `You've completed ${newMilestone} chapters! You're crushing it!`,
+                    tag: 'milestone'
+                });
+                localStorage.setItem('lastMilestone', newMilestone.toString());
+                localStorage.setItem(notificationKey, (sentCount + 1).toString());
+            }
         }
     };
 

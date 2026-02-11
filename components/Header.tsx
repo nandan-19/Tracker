@@ -3,6 +3,7 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/providers/AuthProvider';
+import { useSettings } from '@/providers/SettingsProvider';
 import { useTracker } from '@/hooks/useTracker';
 import { useState, useEffect, useMemo } from 'react';
 import { Cloud, CloudOff, Check, Loader2 } from 'lucide-react';
@@ -22,6 +23,7 @@ const MOTIVATIONAL_SUBTITLES = [
 
 export function Header({ title, subtitle }: HeaderProps) {
     const { user } = useAuth();
+    const { settings } = useSettings();
     const { syncStatus } = useTracker();
     const [mounted, setMounted] = useState(false);
 
@@ -83,7 +85,7 @@ export function Header({ title, subtitle }: HeaderProps) {
                         {title || (
                             <>
                                 <span className="text-gradient">{greeting}</span>
-                                <span className="text-zinc-900 dark:text-white">, {user ? 'Champion' : 'Future CA'}.</span>
+                                <span className="text-zinc-900 dark:text-white">, {settings.profile.name}.</span>
                             </>
                         )}
                     </h1>
