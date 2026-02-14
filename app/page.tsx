@@ -247,7 +247,7 @@ export default function Page() {
                  style={{
                    background: 'linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.4), transparent)',
                    backgroundSize: '200% 100%',
-                   animation: 'shimmer 2s infinite'
+                   animation: 'gold-shimmer 2s infinite'
                  }}></div>
             <Crown size={16} className="relative z-10 animate-pulse" style={{ color: '#FFD700' }} strokeWidth={2.5} />
             <span className="text-sm font-black relative z-10 text-gold uppercase tracking-wide"
