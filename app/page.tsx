@@ -236,15 +236,15 @@ export default function Page() {
         <div className="text-right hidden md:block">
           <div className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider mb-1">Overall</div>
           <div className="text-3xl font-mono font-bold text-gradient">{totalProgress}%</div>
-          <div className="mt-3 text-2xl font-black text-neon tracking-tight">
+          <div className="mt-3 text-2xl font-black text-white tracking-tight" aria-label="Target rank">
             {settings.profile.targetRank}
           </div>
         </div>
       </div>
 
-      {/* Mobile Target Rank - Simple Bold Text */}
+      {/* Mobile Target Rank - Simple White Bold Text */}
       <div className="md:hidden text-center mb-5">
-        <div className="text-6xl font-black text-neon tracking-tight leading-none">
+        <div className="text-6xl font-black text-white tracking-tight leading-none" aria-label="Target rank">
           {settings.profile.targetRank}
         </div>
       </div>

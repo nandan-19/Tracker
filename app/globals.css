@@ -173,23 +173,4 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-
-  /* Neon Text Gradient */
-  .text-neon {
-    background: linear-gradient(90deg, #FFD700, #FF6B35, #F72585, #7209B7, #3A0CA3, #7209B7, #F72585, #FF6B35, #FFD700);
-    background-size: 400% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: neon-flow 8s linear infinite;
-  }
-
-  @keyframes neon-flow {
-    0% {
-      background-position: 0% center;
-    }
-    100% {
-      background-position: 400% center;
-    }
-  }
 }
