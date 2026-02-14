@@ -243,6 +243,39 @@ export default function Page() {
         </div>
       </div>
 
+      {/* Mobile Target Rank Card - Prominent Display */}
+      <div className="md:hidden relative glass rounded-2xl p-6 overflow-hidden mb-5">
+        <div className="absolute right-0 top-0 w-32 h-32 bg-gradient-to-br from-amber-400/20 to-orange-400/20 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
+        <div className="absolute left-0 bottom-0 w-24 h-24 bg-gradient-to-tr from-yellow-400/20 to-amber-400/20 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none" />
+        
+        <div className="relative z-10 text-center">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <Crown size={20} className="text-amber-500 dark:text-amber-400" />
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">
+              Target Rank
+            </span>
+          </div>
+          
+          <div className="mb-2">
+            <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 dark:from-amber-400 dark:via-orange-400 dark:to-amber-400 animate-pulse-soft">
+              {settings.profile.targetRank}
+            </div>
+          </div>
+          
+          <div className="flex items-center justify-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+            <Star size={14} className="text-amber-500" />
+            <span>Your Goal, Your Motivation</span>
+            <Star size={14} className="text-amber-500" />
+          </div>
+          
+          <div className="mt-4 pt-4 border-t border-zinc-200/50 dark:border-zinc-700/50">
+            <div className="text-xs text-zinc-600 dark:text-zinc-400 font-medium">
+              Overall Progress: <span className="text-lg font-bold text-gradient ml-1">{totalProgress}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Top Row: Motivation + Countdown */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <MotivationCard />
