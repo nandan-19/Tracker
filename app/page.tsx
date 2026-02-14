@@ -236,60 +236,16 @@ export default function Page() {
         <div className="text-right hidden md:block">
           <div className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider mb-1">Overall</div>
           <div className="text-3xl font-mono font-bold text-gradient">{totalProgress}%</div>
-          <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 border border-amber-200 dark:border-amber-800/50">
-            <Crown size={12} className="text-amber-600 dark:text-amber-400" />
-            <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300">{settings.profile.targetRank}</span>
+          <div className="mt-3 text-2xl font-black text-white tracking-tight" aria-label="Target rank">
+            {settings.profile.targetRank}
           </div>
         </div>
       </div>
 
-      {/* Mobile Target Rank Card - Prominent Display */}
-      <div className="md:hidden relative bg-amber-500 rounded-2xl overflow-hidden shadow-xl ring-4 ring-amber-300 ring-opacity-30 mb-5">
-        {/* Decorative elements - solid shapes */}
-        <div className="absolute -top-8 -right-8 w-24 h-24 bg-amber-400 rounded-full opacity-40" />
-        <div className="absolute -bottom-6 -left-6 w-20 h-20 bg-amber-400 rounded-full opacity-30" />
-        
-        {/* Giant crown icon */}
-        <Crown
-          className="absolute -bottom-2 right-2 text-amber-950 opacity-10"
-          size={80}
-          strokeWidth={1}
-        />
-        
-        <div className="relative z-10 p-5">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Target size={14} className="text-amber-950 opacity-70" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-amber-950 opacity-70">
-                Target Rank
-              </span>
-            </div>
-            <Crown size={16} className="text-amber-950 opacity-50" />
-          </div>
-          
-          {/* Large Target Rank */}
-          <div className="flex items-center gap-4 mb-3">
-            <div className="w-14 h-14 rounded-xl bg-amber-400 flex items-center justify-center shrink-0 shadow-lg">
-              <Crown size={28} className="text-amber-950" strokeWidth={2.5} />
-            </div>
-            <div className="flex-1">
-              <div className="text-3xl font-bold text-amber-950 leading-tight">
-                {settings.profile.targetRank}
-              </div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-amber-950 opacity-70 mt-0.5">
-                Your Destination
-              </div>
-            </div>
-          </div>
-          
-          {/* Progress Badge */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 rounded-full shadow-md">
-            <TrendingUp size={12} className="text-white" />
-            <span className="text-xs font-bold text-white">
-              {totalProgress}% Complete
-            </span>
-          </div>
+      {/* Mobile Target Rank - Simple White Bold Text */}
+      <div className="md:hidden text-center mb-5">
+        <div className="text-6xl font-black text-white tracking-tight leading-none" aria-label="Target rank">
+          {settings.profile.targetRank}
         </div>
       </div>
 
