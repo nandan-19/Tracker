@@ -1,7 +1,7 @@
 'use client'
 import { useTracker } from '@/hooks/useTracker';
 import { SYLLABUS } from '@/lib/syllabus';
-import { BookOpen, CheckCircle2, RotateCcw, Activity, Clock, ChevronRight, Sparkles, Calendar, TrendingUp, TrendingDown, Award, AlertTriangle, Flame, CalendarDays, CalendarClock, Timer, Angry, Dumbbell, Star, Crown, Zap, type LucideIcon } from 'lucide-react';
+import { BookOpen, CheckCircle2, RotateCcw, Activity, Clock, ChevronRight, Sparkles, Calendar, TrendingUp, TrendingDown, Award, AlertTriangle, Flame, CalendarDays, CalendarClock, Timer, Angry, Dumbbell, Star, Crown, Zap, Target, type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/providers/AuthProvider';
 import { useSettings } from '@/providers/SettingsProvider';
@@ -244,34 +244,51 @@ export default function Page() {
       </div>
 
       {/* Mobile Target Rank Card - Prominent Display */}
-      <div className="md:hidden relative glass rounded-2xl p-6 overflow-hidden mb-5">
-        <div className="absolute right-0 top-0 w-32 h-32 bg-gradient-to-br from-amber-400/20 to-orange-400/20 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
-        <div className="absolute left-0 bottom-0 w-24 h-24 bg-gradient-to-tr from-yellow-400/20 to-amber-400/20 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none" />
+      <div className="md:hidden relative bg-amber-500 rounded-2xl overflow-hidden shadow-xl ring-4 ring-amber-300 ring-opacity-30 mb-5">
+        {/* Decorative elements - solid shapes */}
+        <div className="absolute -top-8 -right-8 w-24 h-24 bg-amber-400 rounded-full opacity-40" />
+        <div className="absolute -bottom-6 -left-6 w-20 h-20 bg-amber-400 rounded-full opacity-30" />
         
-        <div className="relative z-10 text-center">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <Crown size={20} className="text-amber-500 dark:text-amber-400" />
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">
-              Target Rank
+        {/* Giant crown icon */}
+        <Crown
+          className="absolute -bottom-2 right-2 text-amber-950 opacity-10"
+          size={80}
+          strokeWidth={1}
+        />
+        
+        <div className="relative z-10 p-5">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Target size={14} className="text-amber-950 opacity-70" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-amber-950 opacity-70">
+                Target Rank
+              </span>
+            </div>
+            <Crown size={16} className="text-amber-950 opacity-50" />
+          </div>
+          
+          {/* Large Target Rank */}
+          <div className="flex items-center gap-4 mb-3">
+            <div className="w-14 h-14 rounded-xl bg-amber-400 flex items-center justify-center shrink-0 shadow-lg">
+              <Crown size={28} className="text-amber-950" strokeWidth={2.5} />
+            </div>
+            <div className="flex-1">
+              <div className="text-3xl font-bold text-amber-950 leading-tight">
+                {settings.profile.targetRank}
+              </div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-amber-950 opacity-70 mt-0.5">
+                Your Destination
+              </div>
+            </div>
+          </div>
+          
+          {/* Progress Badge */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 rounded-full shadow-md">
+            <TrendingUp size={12} className="text-white" />
+            <span className="text-xs font-bold text-white">
+              {totalProgress}% Complete
             </span>
-          </div>
-          
-          <div className="mb-2">
-            <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 dark:from-amber-400 dark:via-orange-400 dark:to-amber-400 animate-pulse-soft">
-              {settings.profile.targetRank}
-            </div>
-          </div>
-          
-          <div className="flex items-center justify-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-            <Star size={14} className="text-amber-500" />
-            <span>Your Goal, Your Motivation</span>
-            <Star size={14} className="text-amber-500" />
-          </div>
-          
-          <div className="mt-4 pt-4 border-t border-zinc-200/50 dark:border-zinc-700/50">
-            <div className="text-xs text-zinc-600 dark:text-zinc-400 font-medium">
-              Overall Progress: <span className="text-lg font-bold text-gradient ml-1">{totalProgress}%</span>
-            </div>
           </div>
         </div>
       </div>
