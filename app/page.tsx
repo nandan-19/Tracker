@@ -236,109 +236,16 @@ export default function Page() {
         <div className="text-right hidden md:block">
           <div className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider mb-1">Overall</div>
           <div className="text-3xl font-mono font-bold text-gradient">{totalProgress}%</div>
-          <div className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full animate-pulse-glow relative overflow-hidden"
-               style={{
-                 background: 'linear-gradient(135deg, #1a1a1a, #2d2d2d)',
-                 border: '2px solid #FFD700',
-                 boxShadow: '0 0 20px rgba(255, 215, 0, 0.3), 0 4px 20px rgba(0, 0, 0, 0.2)'
-               }}>
-            {/* Animated background shimmer */}
-            <div className="absolute inset-0 opacity-20"
-                 style={{
-                   background: 'linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.4), transparent)',
-                   backgroundSize: '200% 100%',
-                   animation: 'gold-shimmer 2s infinite'
-                 }}></div>
-            <Crown size={16} className="relative z-10 animate-pulse" style={{ color: '#FFD700' }} strokeWidth={2.5} />
-            <span className="text-sm font-black relative z-10 text-gold uppercase tracking-wide"
-                  style={{ textShadow: '0 0 10px rgba(255, 215, 0, 0.5)' }}>
-              {settings.profile.targetRank}
-            </span>
-            <Zap size={14} className="relative z-10 animate-pulse" style={{ color: '#FFD700' }} />
+          <div className="mt-3 text-2xl font-black text-neon tracking-tight">
+            {settings.profile.targetRank}
           </div>
         </div>
       </div>
 
-      {/* Mobile Target Rank Card - Premium Gold/Neon Display */}
-      <div className="md:hidden relative overflow-hidden rounded-3xl mb-5 animate-pulse-glow"
-           style={{
-             background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)',
-             border: '2px solid transparent',
-             backgroundClip: 'padding-box'
-           }}>
-        {/* Animated gold border */}
-        <div className="absolute inset-0 rounded-3xl p-[2px] -z-10"
-             style={{
-               background: 'linear-gradient(135deg, #FFD700, #FFA500, #FFD700, #FFED4E)',
-               backgroundSize: '400% 400%',
-               animation: 'gold-shimmer 3s linear infinite'
-             }}>
-        </div>
-        
-        {/* Neon glow effects */}
-        <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full blur-3xl opacity-40"
-             style={{ background: 'radial-gradient(circle, #FFD700, transparent)' }} />
-        <div className="absolute -bottom-20 -left-20 w-40 h-40 rounded-full blur-3xl opacity-30"
-             style={{ background: 'radial-gradient(circle, #FF6B35, transparent)' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-60 rounded-full blur-3xl opacity-20"
-             style={{ background: 'radial-gradient(circle, #F72585, transparent)' }} />
-        
-        {/* Floating crown icon with animation */}
-        <Crown
-          className="absolute -bottom-4 right-4 opacity-10 animate-float"
-          size={100}
-          strokeWidth={1}
-          style={{ color: '#FFD700' }}
-        />
-        
-        <div className="relative z-10 p-6">
-          {/* Header with premium styling */}
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2">
-              <Target size={16} className="text-gold animate-pulse" style={{ color: '#FFD700' }} />
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-gold"
-                    style={{ textShadow: '0 0 20px rgba(255, 215, 0, 0.5)' }}>
-                Target Rank
-              </span>
-            </div>
-            <Zap size={18} className="animate-pulse" style={{ color: '#FFD700' }} />
-          </div>
-          
-          {/* Large Target Rank with Premium Gold Gradient Text */}
-          <div className="flex items-center gap-4 mb-5">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 animate-neon-pulse"
-                 style={{
-                   background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-                   boxShadow: '0 8px 32px rgba(255, 215, 0, 0.4)'
-                 }}>
-              <Crown size={32} className="animate-float" style={{ color: '#1a1a1a' }} strokeWidth={3} />
-            </div>
-            <div className="flex-1">
-              <div className="text-5xl font-black leading-none mb-2 text-neon"
-                   style={{ 
-                     textShadow: '0 0 30px rgba(255, 215, 0, 0.5), 0 0 60px rgba(255, 107, 53, 0.3)',
-                     letterSpacing: '-0.02em'
-                   }}>
-                {settings.profile.targetRank}
-              </div>
-              <div className="text-[11px] font-bold uppercase tracking-[0.15em] opacity-60"
-                   style={{ color: '#FFD700' }}>
-                Your Destination
-              </div>
-            </div>
-          </div>
-          
-          {/* Progress Badge with neon styling */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full animate-neon-pulse"
-               style={{
-                 background: 'linear-gradient(135deg, #FFD700, #FF6B35)',
-                 boxShadow: '0 4px 20px rgba(255, 215, 0, 0.3)'
-               }}>
-            <TrendingUp size={14} style={{ color: '#1a1a1a' }} strokeWidth={3} />
-            <span className="text-sm font-black" style={{ color: '#1a1a1a' }}>
-              {totalProgress}% COMPLETE
-            </span>
-          </div>
+      {/* Mobile Target Rank - Simple Bold Text */}
+      <div className="md:hidden text-center mb-5">
+        <div className="text-6xl font-black text-neon tracking-tight leading-none">
+          {settings.profile.targetRank}
         </div>
       </div>
 
