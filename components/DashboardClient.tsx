@@ -236,12 +236,18 @@ export default function DashboardClient() {
         <div className="text-right hidden md:block">
           <div className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider mb-1">Overall</div>
           <div className="text-3xl font-mono font-bold text-gradient">{totalProgress}%</div>
-          <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 border border-amber-200 dark:border-amber-800/50">
-            <Crown size={12} className="text-amber-600 dark:text-amber-400" />
-            <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300">{settings.profile.targetRank}</span>
+          <div className="mt-3 text-2xl font-black text-white tracking-tight" aria-label="Target rank">
+            {settings.profile.targetRank}
           </div>
         </div>
       </header>
+
+      {/* Mobile Target Rank - Simple White Bold Text */}
+      <div className="md:hidden text-center mb-5">
+        <div className="text-6xl font-black text-white tracking-tight leading-none" aria-label="Target rank">
+          {settings.profile.targetRank}
+        </div>
+      </div>
 
       {/* Top Row: Motivation + Countdown */}
       <section aria-label="Motivation and exam countdown" className="grid grid-cols-1 md:grid-cols-2 gap-4">
