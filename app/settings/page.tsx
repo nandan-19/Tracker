@@ -93,12 +93,12 @@ export default function SettingsPage() {
     ];
 
     return (
-        <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-12 space-y-6">
+        <main className="max-w-4xl mx-auto p-4 sm:p-6 md:p-12 space-y-6">
             {/* Header */}
-            <div>
+            <header>
                 <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-2">Settings</h1>
                 <p className="text-zinc-600 dark:text-zinc-400">Customize your CA Tracker experience</p>
-            </div>
+            </header>
 
             {/* Settings Sections */}
             <div className="space-y-3">
@@ -353,7 +353,7 @@ export default function SettingsPage() {
                     </button>
                 </div>
             )}
-        </div>
+        </main>
     );
 }
 
@@ -372,9 +372,11 @@ function SettingsSection({
     children: React.ReactNode;
 }) {
     return (
-        <div className="glass rounded-2xl overflow-hidden">
+        <section aria-label={title} className="glass rounded-2xl overflow-hidden">
             <button
                 onClick={onToggle}
+                aria-expanded={isOpen}
+                aria-controls={`section-${title.toLowerCase().replace(/\s+/g, '-')}`}
                 className="w-full p-5 flex items-center justify-between hover:bg-white/50 dark:hover:bg-zinc-800/30 transition-colors"
             >
                 <div className="flex items-center gap-3">
@@ -387,11 +389,14 @@ function SettingsSection({
                 />
             </button>
             {isOpen && (
-                <div className="px-5 pb-5 border-t border-zinc-200/50 dark:border-zinc-700/50 pt-4">
+                <div
+                    id={`section-${title.toLowerCase().replace(/\s+/g, '-')}`}
+                    className="px-5 pb-5 border-t border-zinc-200/50 dark:border-zinc-700/50 pt-4"
+                >
                     {children}
                 </div>
             )}
-        </div>
+        </section>
     );
 }
 

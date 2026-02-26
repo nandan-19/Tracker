@@ -12,8 +12,28 @@ import { Analytics } from "@vercel/analytics/next";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "CA Final Tracker",
-  description: "Track your CA Final preparation progress.",
+  metadataBase: new URL('https://cafinaltracker.vercel.app'),
+  title: {
+    default: "CA Final Tracker",
+    template: "%s | CA Final Tracker"
+  },
+  description: "Track your CA Final preparation progress, set goals, and smash your exams.",
+  keywords: ["CA Final", "Chartered Accountant", "Study Tracker", "Exam Prep", "Syllabus Tracker", "ICAI"],
+  authors: [{ name: "CA Tracker App" }],
+  creator: "CA Tracker App",
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "https://cafinaltracker.vercel.app",
+    title: "CA Final Tracker",
+    description: "Track your CA Final preparation progress, set goals, and smash your exams.",
+    siteName: "CA Final Tracker",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CA Final Tracker",
+    description: "Track your CA Final preparation progress, set goals, and smash your exams.",
+  },
   manifest: "/manifest.json",
 };
 
