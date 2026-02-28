@@ -14,7 +14,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   metadataBase: new URL('https://cafinaltracker.vercel.app'),
   title: {
-    default: "CA Final Tracker",
+    default: "CA Final Tracker - Dashboard & Study Planner",
     template: "%s | CA Final Tracker"
   },
   description: "Track your CA Final preparation progress, set goals, and smash your exams.",

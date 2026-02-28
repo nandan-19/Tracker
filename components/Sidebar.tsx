@@ -3,13 +3,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Layout, Trophy, X, Sun, Moon, LogOut, BarChart3, Settings } from 'lucide-react';
+import { Layout, X, Sun, Moon, LogOut, BarChart3, Settings } from 'lucide-react';
 import { SYLLABUS } from '@/lib/syllabus';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { useTracker } from '@/hooks/useTracker';
+import Image from 'next/image';
 
 export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const pathname = usePathname();
@@ -65,8 +66,15 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
 
                     <div className="p-5 flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
-                                <Trophy size={18} strokeWidth={2.5} />
+                            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-indigo-500/25 shrink-0 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <Image
+                                    src="/icons/icon.png"
+                                    alt="CA Tracker Logo"
+                                    width={40}
+                                    height={40}
+                                    className="object-cover w-full h-full"
+                                    unoptimized
+                                />
                             </div>
                             <div>
                                 <span className="font-bold text-base tracking-tight text-zinc-900 dark:text-white">CA Tracker</span>

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Sign Up',
+    title: 'Create a New Account',
     description: 'Create your CA Final Tracker account and start organizing your study goals today.',
 };
 

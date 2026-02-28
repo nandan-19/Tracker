@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Study Stats',
+    title: 'Study Stats & Progress',
     description: 'View your detailed study statistics and progress.',
     robots: {
         index: false,
