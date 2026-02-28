@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   keywords: ["CA Final", "Chartered Accountant", "Study Tracker", "Exam Prep", "Syllabus Tracker", "ICAI"],
   authors: [{ name: "CA Tracker App" }],
   creator: "CA Tracker App",
+  verification: {
+    google: "j_kssWnaeZPSVrdxpok8ds5e7wT-8F4TzYpIo4WQkE4",
+  },
   openGraph: {
     type: "website",
     locale: "en_IN",
