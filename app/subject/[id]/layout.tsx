@@ -20,7 +20,7 @@ function formatChapterSnippet(chapters: string[]): string {
         return `chapters like ${topChapters[0]} and ${topChapters[1]}`;
     }
 
-    return `chapters like ${topChapters.slice(0, -1).join(', ')}, and ${topChapters[topChapters.length - 1]}`;
+    return `chapters like ${topChapters.slice(0, 2).join(', ')}, and ${topChapters[topChapters.length - 1]}`;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
