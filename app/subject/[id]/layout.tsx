@@ -42,6 +42,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
         title: `${subject.code} - ${subject.shortName} | CA Final Tracker`,
         description: `Track your preparation progress for ${subject.name} encompassing ${chapterSnippet}.`,
+        alternates: {
+            canonical: `/subject/${id}`,
+        },
         robots: {
             index: true,
             follow: true,

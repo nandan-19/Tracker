@@ -13,6 +13,9 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://cafinaltracker.vercel.app'),
+  alternates: {
+    canonical: '/',
+  },
   title: {
     default: "CA Final Tracker - Dashboard & Study Planner",
     template: "%s | CA Final Tracker"
@@ -31,11 +34,20 @@ export const metadata: Metadata = {
     title: "CA Final Tracker",
     description: "Track your CA Final preparation progress, set goals, and smash your exams.",
     siteName: "CA Final Tracker",
+    images: [
+      {
+        url: 'https://cafinaltracker.vercel.app/icons/icon.png',
+        width: 512,
+        height: 512,
+        alt: 'CA Final Tracker Logo',
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "CA Final Tracker",
     description: "Track your CA Final preparation progress, set goals, and smash your exams.",
+    images: ['https://cafinaltracker.vercel.app/icons/icon.png'],
   },
   manifest: "/manifest.json",
 };
