@@ -21,10 +21,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     return {
         title: `${subject.code} - ${subject.shortName} | CA Final Tracker`,
-        description: `Track your preparation progress for ${subject.name} encompassing all chapters.`,
+        description: `Track your preparation progress for ${subject.name} encompassing chapters like ${subject.chapters.slice(0, 3).join(', ')}.`,
         robots: {
-            index: false,
-            follow: false,
+            index: true,
+            follow: true,
         }
     };
 }
