@@ -5,6 +5,24 @@ type Props = {
     params: { id: string };
 };
 
+function formatChapterSnippet(chapters: string[]): string {
+    const topChapters = chapters.slice(0, 3);
+
+    if (topChapters.length === 0) {
+        return 'all key chapters';
+    }
+
+    if (topChapters.length === 1) {
+        return `a chapter like ${topChapters[0]}`;
+    }
+
+    if (topChapters.length === 2) {
+        return `chapters like ${topChapters[0]} and ${topChapters[1]}`;
+    }
+
+    return `chapters like ${topChapters.slice(0, -1).join(', ')}, and ${topChapters[topChapters.length - 1]}`;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const id = params.id;
     const subject = SYLLABUS.find((sub) => sub.id === id);
@@ -19,15 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         };
     }
 
-    const topChapters = subject.chapters.slice(0, 3);
-    let chapterSnippet = 'all key chapters';
-    if (topChapters.length === 1) {
-        chapterSnippet = `a chapter like ${topChapters[0]}`;
-    } else if (topChapters.length === 2) {
-        chapterSnippet = `chapters like ${topChapters[0]} and ${topChapters[1]}`;
-    } else if (topChapters.length === 3) {
-        chapterSnippet = `chapters like ${topChapters[0]}, ${topChapters[1]}, and ${topChapters[2]}`;
-    }
+    const chapterSnippet = formatChapterSnippet(subject.chapters);
 
     return {
         title: `${subject.code} - ${subject.shortName} | CA Final Tracker`,
