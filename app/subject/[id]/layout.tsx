@@ -20,14 +20,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
 
     const topChapters = subject.chapters.slice(0, 3);
-    const chapterSnippet =
-        topChapters.length === 0
-            ? 'all key chapters'
-            : topChapters.length === 1
-                ? `chapter like ${topChapters[0]}`
-                : topChapters.length === 2
-                    ? `chapters like ${topChapters[0]} and ${topChapters[1]}`
-                    : `chapters like ${topChapters[0]}, ${topChapters[1]}, and ${topChapters[2]}`;
+    let chapterSnippet = 'all key chapters';
+    if (topChapters.length === 1) {
+        chapterSnippet = `a chapter like ${topChapters[0]}`;
+    } else if (topChapters.length === 2) {
+        chapterSnippet = `chapters like ${topChapters[0]} and ${topChapters[1]}`;
+    } else if (topChapters.length === 3) {
+        chapterSnippet = `chapters like ${topChapters[0]}, ${topChapters[1]}, and ${topChapters[2]}`;
+    }
 
     return {
         title: `${subject.code} - ${subject.shortName} | CA Final Tracker`,
