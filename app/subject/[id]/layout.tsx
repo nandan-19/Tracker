@@ -19,9 +19,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         };
     }
 
+    const topChapters = subject.chapters.slice(0, 3);
+    const chapterSnippet =
+        topChapters.length === 0
+            ? 'all key chapters'
+            : topChapters.length === 1
+                ? `chapter like ${topChapters[0]}`
+                : topChapters.length === 2
+                    ? `chapters like ${topChapters[0]} and ${topChapters[1]}`
+                    : `chapters like ${topChapters[0]}, ${topChapters[1]}, and ${topChapters[2]}`;
+
     return {
         title: `${subject.code} - ${subject.shortName} | CA Final Tracker`,
-        description: `Track your preparation progress for ${subject.name} encompassing chapters like ${subject.chapters.slice(0, 3).join(', ')}.`,
+        description: `Track your preparation progress for ${subject.name} encompassing ${chapterSnippet}.`,
         robots: {
             index: true,
             follow: true,
