@@ -23,18 +23,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'monthly',
             priority: 0.8,
         },
-        {
-            url: `${baseUrl}/settings`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/stats`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
     ];
 
     const dynamicRoutes: MetadataRoute.Sitemap = SYLLABUS.map((subject) => ({
