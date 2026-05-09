@@ -10,19 +10,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({ subsets: ["latin"] });
-const structuredData = {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'CA Final Tracker',
-  applicationCategory: 'EducationalApplication',
-  operatingSystem: 'Any',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'INR',
-  },
-  description: 'A comprehensive study tracker and syllabus planner for ICAI CA Final students.',
-};
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://cafinaltracker.vercel.app'),
@@ -80,12 +67,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-      </head>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
