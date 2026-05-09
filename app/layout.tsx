@@ -8,11 +8,28 @@ import { SettingsProvider } from "@/providers/SettingsProvider";
 import ClientLayout from "@/components/ClientLayout";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'CA Final Tracker',
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'INR',
+  },
+  description: 'A comprehensive study tracker and syllabus planner for ICAI CA Final students.',
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://cafinaltracker.vercel.app'),
+  alternates: {
+    canonical: '/',
+  },
   title: {
     default: "CA Final Tracker - Dashboard & Study Planner",
     template: "%s | CA Final Tracker"
@@ -31,11 +48,20 @@ export const metadata: Metadata = {
     title: "CA Final Tracker",
     description: "Track your CA Final preparation progress, set goals, and smash your exams.",
     siteName: "CA Final Tracker",
+    images: [
+      {
+        url: '/icons/icon.png',
+        width: 512,
+        height: 512,
+        alt: 'CA Final Tracker Logo',
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "CA Final Tracker",
     description: "Track your CA Final preparation progress, set goals, and smash your exams.",
+    images: ['/icons/icon.png'],
   },
   manifest: "/manifest.json",
 };
@@ -56,6 +82,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        <Script
+          id="structured-data"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
