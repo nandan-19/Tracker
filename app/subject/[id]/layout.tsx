@@ -5,8 +5,8 @@ type Props = {
     params: { id: string };
 };
 
-function formatChapterSnippet(chapters: string[]): string {
-    const topChapters = chapters.slice(0, 3);
+function formatChapterSnippet(chapterNames: string[]): string {
+    const topChapters = chapterNames.slice(0, 3);
 
     if (topChapters.length === 0) {
         return 'all key chapters';
